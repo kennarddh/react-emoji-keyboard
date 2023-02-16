@@ -10438,6 +10438,6 @@ const Emoji = [
 		emoji: '🏴󠁧󠁢󠁷󠁬󠁳󠁿',
 		name: 'wales',
 	},
-]
+] as const
 
 export default Emoji
