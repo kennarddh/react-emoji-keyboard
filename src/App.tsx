@@ -3,18 +3,39 @@ import { FC, useCallback, useState, ChangeEvent } from 'react'
 
 const App: FC = () => {
 	const [Text, SetText] = useState<string>('')
+	const [LastUsed, SetLastUsed] = useState<string[]>([])
 
 	const OnInput = useCallback((event: ChangeEvent<HTMLInputElement>) => {
-		SetText(
-			event.target.value.replaceAll(/(:[^:]+:)/gi, name => {
-				const emojiName = name.slice(1, -1)
-				console.log({ emojiName, name })
+		const replaceResult = event.target.value.replaceAll(
+			/(:[^:]+:)/gi,
+			name => {
+				const emojiName = name.slice(1, -1).toLowerCase()
 
-				return (
-					Emoji.find(({ name }) => name === emojiName)?.emoji ?? name
-				)
-			})
+				const findResult = Emoji.find(
+					({ name }) => name === emojiName
+				)?.emoji
+
+				if (findResult) {
+					SetLastUsed(prev => {
+						if (prev.includes(emojiName)) return prev
+
+						const newPrev = [...prev]
+
+						if (prev.length === 10) {
+							newPrev.shift()
+						}
+
+						newPrev.push(emojiName)
+
+						return newPrev
+					})
+				}
+
+				return findResult ?? name
+			}
 		)
+
+		SetText(replaceResult)
 	}, [])
 
 	return (
@@ -25,6 +46,22 @@ const App: FC = () => {
 				value={Text}
 				onChange={OnInput}
 			/>
+			<div>
+				<h3>Last used emojis</h3>
+				{LastUsed.map(emojiName => (
+					<ol key={emojiName}>
+						<li>
+							<p>
+								{
+									Emoji.find(({ name }) => emojiName === name)
+										?.emoji
+								}{' '}
+								{emojiName}
+							</p>
+						</li>
+					</ol>
+				))}
+			</div>
 		</div>
 	)
 }
