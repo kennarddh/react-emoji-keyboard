@@ -1,9 +1,11 @@
 import Emoji from 'Constants/Emoji'
-import { FC, useCallback, useState, ChangeEvent } from 'react'
+import { FC, useCallback, useState, ChangeEvent, useEffect } from 'react'
 
 const App: FC = () => {
 	const [Text, SetText] = useState<string>('')
-	const [LastUsed, SetLastUsed] = useState<string[]>([])
+	const [LastUsed, SetLastUsed] = useState<string[]>(() => {
+		return JSON.parse(localStorage.getItem('lastUsedEmojis') ?? '[]') ?? []
+	})
 
 	const OnInput = useCallback((event: ChangeEvent<HTMLInputElement>) => {
 		const replaceResult = event.target.value.replaceAll(
@@ -37,6 +39,10 @@ const App: FC = () => {
 
 		SetText(replaceResult)
 	}, [])
+
+	useEffect(() => {
+		localStorage.setItem('lastUsedEmojis', JSON.stringify(LastUsed))
+	}, [LastUsed])
 
 	return (
 		<div>
