@@ -60,16 +60,12 @@ const App: FC = () => {
 	}, [LastUsed])
 
 	useEffect(() => {
-		if (TargetIndex === -1) {
+		if (TargetIndex !== -1) {
 			InputRef.current?.setSelectionRange(
-				InputRef.current.value.length,
-				InputRef.current.value.length
+				TargetIndex + 1,
+				TargetIndex + 1
 			)
-
-			return
 		}
-
-		InputRef.current?.setSelectionRange(TargetIndex + 1, TargetIndex + 1)
 	}, [TargetIndex])
 
 	return (
